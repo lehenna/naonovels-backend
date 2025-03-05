@@ -1,0 +1,155 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id        String            @id @default(cuid())
+    email     String            @unique
+    banned    Boolean           @default(false)
+    role      String            @default("user")
+    createdAt DateTime          @default(now())
+    profile   Profile           @relation(fields: [profileId], references: [id])
+    profileId String
+    teams     TeamMember[]
+    following ProfileFollower[]
+    sessions  Session[]
+    authLinks AuthLink[]
+    history   History[]
+}
+
+model Session {
+    id             String   @id @default(cuid())
+    user           User     @relation(fields: [userId], references: [id])
+    userId         String
+    ipAddress      String?
+    deviceName     String?
+    deviceVersion  String?
+    browserName    String?
+    browserVersion String?
+    city           String?
+    country        String?
+    createdAt      DateTime @default(now())
+}
+
+model AuthLink {
+    id        String   @id @default(cuid())
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    secret    String
+    expiresAt DateTime
+}
+
+model Profile {
+    id         String            @id @default(cuid())
+    name       String
+    identifier String            @unique
+    biography  String?
+    cover      String            @default("default-cover.png")
+    avatar     String            @default("default-avatar.png")
+    user       User[]
+    team       Team[]
+    followers  ProfileFollower[]
+}
+
+model Team {
+    id        String        @id @default(cuid())
+    createdAt DateTime      @default(now())
+    profile   Profile       @relation(fields: [profileId], references: [id])
+    profileId String
+    members   TeamMember[]
+    posts     ChapterPost[]
+}
+
+model TeamMember {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    isCreator Boolean  @default(false)
+    isPending Boolean  @default(true)
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    team      Team     @relation(fields: [teamId], references: [id])
+    teamId    String
+}
+
+model ProfileFollower {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    profile   Profile  @relation(fields: [profileId], references: [id])
+    profileId String
+}
+
+model Serie {
+    id          String            @id @default(cuid())
+    cover       String
+    icon        String
+    title       String
+    alternative String?
+    tags        String[]
+    synopsis    String
+    genres      Int[]
+    state       Int
+    format      Int
+    authors     String[]
+    artists     String[]
+    createdAt   DateTime          @default(now())
+    collections CollectionSerie[]
+    volumes     Volume[]
+}
+
+model Volume {
+    id       String    @id @default(cuid())
+    title    String
+    count    Float
+    serie    Serie     @relation(fields: [serieId], references: [id])
+    serieId  String
+    chapters Chapter[]
+}
+
+model Chapter {
+    id       String        @id @default(cuid())
+    title    String
+    count    Float
+    volume   Volume        @relation(fields: [volumeId], references: [id])
+    volumeId String
+    posts    ChapterPost[]
+    history  History[]
+}
+
+model ChapterPost {
+    id        String   @id @default(cuid())
+    team      Team     @relation(fields: [teamId], references: [id])
+    teamId    String
+    chapter   Chapter  @relation(fields: [chapterId], references: [id])
+    chapterId String
+    createdAt DateTime @default(now())
+}
+
+model Collection {
+    id       String            @id @default(cuid())
+    name     String
+    isPublic Boolean           @default(true)
+    series   CollectionSerie[]
+}
+
+model CollectionSerie {
+    id           String      @id @default(cuid())
+    serie        Serie       @relation(fields: [serieId], references: [id])
+    serieId      String
+    collection   Collection? @relation(fields: [collectionId], references: [id])
+    collectionId String?
+}
+
+model History {
+    id        String  @id @default(cuid())
+    user      User    @relation(fields: [userId], references: [id])
+    userId    String
+    chapter   Chapter @relation(fields: [chapterId], references: [id])
+    chapterId String
+}
