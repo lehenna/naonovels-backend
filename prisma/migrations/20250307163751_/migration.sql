@@ -82,6 +82,8 @@ CREATE TABLE "ProfileFollower" (
 -- CreateTable
 CREATE TABLE "Serie" (
     "id" TEXT NOT NULL,
+    "cover" TEXT NOT NULL,
+    "icon" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "alternative" TEXT,
     "tags" TEXT[],
@@ -121,6 +123,7 @@ CREATE TABLE "ChapterPost" (
     "id" TEXT NOT NULL,
     "teamId" TEXT NOT NULL,
     "chapterId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "ChapterPost_pkey" PRIMARY KEY ("id")
 );
@@ -141,6 +144,15 @@ CREATE TABLE "CollectionSerie" (
     "collectionId" TEXT,
 
     CONSTRAINT "CollectionSerie_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "History" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "chapterId" TEXT NOT NULL,
+
+    CONSTRAINT "History_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -190,3 +202,9 @@ ALTER TABLE "CollectionSerie" ADD CONSTRAINT "CollectionSerie_serieId_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "CollectionSerie" ADD CONSTRAINT "CollectionSerie_collectionId_fkey" FOREIGN KEY ("collectionId") REFERENCES "Collection"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "History" ADD CONSTRAINT "History_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "History" ADD CONSTRAINT "History_chapterId_fkey" FOREIGN KEY ("chapterId") REFERENCES "Chapter"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

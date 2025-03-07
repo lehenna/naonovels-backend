@@ -194,7 +194,7 @@ routes.put("/:teamId", async (c) => {
     },
   });
   if (!team) throw new APIError(404, "Team not found.");
-  if (team.members.length === 0) throw new APIError(403, "Permission denied.");
+  if (team.members.length === 0) throw new APIError(403, "Forbidden");
   const newData = await ProfileServices.createNewData(
     session.user.profile,
     data
@@ -235,7 +235,7 @@ routes.delete("/:teamId", async (c) => {
   });
   if (!team) throw new APIError(404, "Team not found.");
   if (team.members.length === 0 || !team.members[0].isCreator)
-    throw new APIError(403, "Permission denied.");
+    throw new APIError(403, "Forbidden");
   await prisma.profile.delete({
     where: {
       id: team.profile.id,

@@ -6,6 +6,8 @@ import { SerieRoutes } from "./series";
 import { VolumeRoutes } from "./volumes";
 import { ChapterRoutes } from "./chapters";
 import { ChapterPostRoutes } from "./chapter-posts";
+import { CollectionRoutes } from "./collections";
+import { HistoryRoutes } from "./history";
 
 const routes = new Hono();
 
@@ -17,5 +19,7 @@ routes.route("/series", SerieRoutes);
 routes.route("/volumes", VolumeRoutes);
 routes.route("/chapter-posts", ChapterPostRoutes);
 routes.route("/chapters", ChapterRoutes);
+routes.route("/collections", CollectionRoutes);
+routes.route("/history", HistoryRoutes);
 
 export { routes };

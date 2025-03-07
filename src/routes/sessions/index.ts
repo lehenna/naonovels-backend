@@ -47,7 +47,7 @@ routes.delete("/:sessionId", async (c) => {
   });
   if (!sessionToDelete) throw new APIError(404, "Session not found.");
   if (sessionToDelete.user.id !== session.user.id)
-    throw new APIError(403, "Permission denied.");
+    throw new APIError(403, "Forbidden");
   await prisma.session.delete({
     where: {
       id: sessionToDelete.id,

@@ -8,18 +8,19 @@ datasource db {
 }
 
 model User {
-    id        String            @id @default(cuid())
-    email     String            @unique
-    banned    Boolean           @default(false)
-    role      String            @default("user")
-    createdAt DateTime          @default(now())
-    profile   Profile           @relation(fields: [profileId], references: [id])
-    profileId String
-    teams     TeamMember[]
-    following ProfileFollower[]
-    sessions  Session[]
-    authLinks AuthLink[]
-    history   History[]
+    id          String            @id @default(cuid())
+    email       String            @unique
+    banned      Boolean           @default(false)
+    role        String            @default("user")
+    createdAt   DateTime          @default(now())
+    profile     Profile           @relation(fields: [profileId], references: [id])
+    profileId   String
+    teams       TeamMember[]
+    following   ProfileFollower[]
+    sessions    Session[]
+    authLinks   AuthLink[]
+    history     History[]
+    collections Collection[]
 }
 
 model Session {
@@ -119,16 +120,16 @@ model Chapter {
     volume   Volume        @relation(fields: [volumeId], references: [id])
     volumeId String
     posts    ChapterPost[]
-    history  History[]
 }
 
 model ChapterPost {
-    id        String   @id @default(cuid())
-    team      Team     @relation(fields: [teamId], references: [id])
+    id        String    @id @default(cuid())
+    team      Team      @relation(fields: [teamId], references: [id])
     teamId    String
-    chapter   Chapter  @relation(fields: [chapterId], references: [id])
+    chapter   Chapter   @relation(fields: [chapterId], references: [id])
     chapterId String
-    createdAt DateTime @default(now())
+    createdAt DateTime  @default(now())
+    history   History[]
 }
 
 model Collection {
@@ -136,6 +137,8 @@ model Collection {
     name     String
     isPublic Boolean           @default(true)
     series   CollectionSerie[]
+    user     User              @relation(fields: [userId], references: [id])
+    userId   String
 }
 
 model CollectionSerie {
@@ -147,9 +150,10 @@ model CollectionSerie {
 }
 
 model History {
-    id        String  @id @default(cuid())
-    user      User    @relation(fields: [userId], references: [id])
+    id        String      @id @default(cuid())
+    user      User        @relation(fields: [userId], references: [id])
     userId    String
-    chapter   Chapter @relation(fields: [chapterId], references: [id])
+    chapter   ChapterPost @relation(fields: [chapterId], references: [id])
     chapterId String
+    createdAt DateTime    @default(now())
 }
